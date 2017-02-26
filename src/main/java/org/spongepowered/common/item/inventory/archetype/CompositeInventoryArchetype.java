@@ -26,12 +26,21 @@ package org.spongepowered.common.item.inventory.archetype;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.Container;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryArchetype;
 import org.spongepowered.api.item.inventory.InventoryProperty;
+import org.spongepowered.common.item.inventory.custom.CustomContainer;
+import org.spongepowered.common.item.inventory.custom.CustomInventory;
+import org.spongepowered.common.mixin.core.entity.player.MixinEntityPlayerMP;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 public class CompositeInventoryArchetype implements InventoryArchetype {
 
@@ -39,12 +48,15 @@ public class CompositeInventoryArchetype implements InventoryArchetype {
     private final String name;
     private final List<InventoryArchetype> types;
     private final Map<String, InventoryProperty<String, ?>> properties;
+    private BiFunction<Inventory, Player, Container> containerProvider;
 
-    public CompositeInventoryArchetype(String id, String name, List<InventoryArchetype> types, Map<String, InventoryProperty<String, ?>> properties) {
+    public CompositeInventoryArchetype(String id, String name, List<InventoryArchetype> types, Map<String, InventoryProperty<String, ?>> properties,
+            BiFunction<Inventory, Player, Container> containerProvider) {
         this.id = id;
         this.name = name;
         this.types = ImmutableList.copyOf(types);
         this.properties = ImmutableMap.copyOf(properties);
+        this.containerProvider = containerProvider;
     }
 
     @Override
@@ -84,5 +96,13 @@ public class CompositeInventoryArchetype implements InventoryArchetype {
     @Override
     public Map<String, InventoryProperty<String, ?>> getProperties() {
         return this.properties;
+    }
+
+    @Override
+    public Container getContainer(Inventory inventory, Player player) {
+        if (containerProvider == null) {
+            return ((Container) new CustomContainer(((EntityPlayer) player), ((CustomInventory) inventory)));
+        }
+        return containerProvider.apply(inventory, player);
     }
 }

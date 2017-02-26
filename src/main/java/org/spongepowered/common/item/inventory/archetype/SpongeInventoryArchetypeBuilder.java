@@ -24,9 +24,13 @@
  */
 package org.spongepowered.common.item.inventory.archetype;
 
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
+import org.spongepowered.api.item.inventory.Container;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryArchetype;
 import org.spongepowered.api.item.inventory.InventoryProperty;
+import org.spongepowered.api.text.translation.Translation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,12 +39,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 public class SpongeInventoryArchetypeBuilder implements InventoryArchetype.Builder {
 
     private List<InventoryArchetype> types = new ArrayList<>();
     private Map<String, InventoryProperty<String, ?>> properties = new HashMap<>();
     private Set<Class<? extends InteractInventoryEvent>> events = new HashSet<>();
+    private BiFunction<Inventory, Player, Container> containerProvider;
 
     @Override
     public InventoryArchetype.Builder property(InventoryProperty<String, ?> property) {
@@ -64,7 +70,7 @@ public class SpongeInventoryArchetypeBuilder implements InventoryArchetype.Build
     public InventoryArchetype build(String id, String name) {
         // TODO register archetype
         // TODO events
-        return new CompositeInventoryArchetype(id, name, types, properties);
+        return new CompositeInventoryArchetype(id, name, types, properties, containerProvider);
     }
 
     @Override
@@ -84,4 +90,9 @@ public class SpongeInventoryArchetypeBuilder implements InventoryArchetype.Build
         return this;
     }
 
+    @Override
+    public InventoryArchetype.Builder container(BiFunction<Inventory, Player, Container> containerProvider) {
+        this.containerProvider = containerProvider;
+        return this;
+    }
 }
