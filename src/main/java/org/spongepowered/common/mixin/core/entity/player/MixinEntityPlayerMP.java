@@ -89,7 +89,7 @@ import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.entity.living.player.tab.TabList;
+import org.spongepowered.api.entity.living.player.tab.PlayerTabList;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -217,7 +217,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     private Set<SkinPart> skinParts = Sets.newHashSet();
     private int viewDistance;
-    private TabList tabList = new SpongeTabList((EntityPlayerMP) (Object) this);
+    private PlayerTabList tabList = new SpongeTabList((EntityPlayerMP) (Object) this);
 
     private GameType pendingGameType;
 
@@ -721,7 +721,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     }
 
     @Override
-    public TabList getTabList() {
+    public PlayerTabList getTabList() {
         return this.tabList;
     }
 

@@ -37,6 +37,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
+import org.spongepowered.api.entity.living.player.tab.PlayerTabList;
 import org.spongepowered.api.entity.living.player.tab.TabList;
 import org.spongepowered.api.entity.living.player.tab.TabListEntry;
 import org.spongepowered.api.text.Text;
@@ -51,7 +52,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public final class SpongeTabList implements TabList {
+public final class SpongeTabList implements PlayerTabList {
 
     private static final ITextComponent EMPTY_COMPONENT = new TextComponentString("");
     private final EntityPlayerMP player;
