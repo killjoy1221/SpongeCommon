@@ -40,7 +40,7 @@ import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.common.SpongeImpl;
 import org.spongepowered.common.entity.SpongeEntityType;
 
@@ -212,9 +212,9 @@ public class TimingHistory {
         final double avg;
 
         PingRecord() {
-            final Collection<Player> onlinePlayers = SpongeImpl.getGame().getServer().getOnlinePlayers();
+            final Collection<ServerPlayer> onlinePlayers = SpongeImpl.getGame().getServer().getOnlinePlayers();
             int totalPing = 0;
-            for (Player player : onlinePlayers) {
+            for (ServerPlayer player : onlinePlayers) {
                 totalPing += player.getConnection().getLatency();
             }
             this.avg = onlinePlayers.isEmpty() ? 0 : totalPing / onlinePlayers.size();

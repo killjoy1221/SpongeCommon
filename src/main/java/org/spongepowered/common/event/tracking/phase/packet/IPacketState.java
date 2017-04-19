@@ -24,18 +24,16 @@
  */
 package org.spongepowered.common.event.tracking.phase.packet;
 
-import com.google.common.collect.HashMultimap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.Packet;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.cause.entity.spawn.EntitySpawnCause;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
-import org.spongepowered.api.world.World;
 import org.spongepowered.common.SpongeImpl;
 import org.spongepowered.common.entity.EntityUtil;
 import org.spongepowered.common.event.tracking.IPhaseState;
@@ -46,8 +44,6 @@ import org.spongepowered.common.interfaces.world.IMixinWorldServer;
 import org.spongepowered.common.registry.type.event.InternalSpawnTypes;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 public interface IPacketState extends IPhaseState {
 
@@ -79,8 +75,8 @@ public interface IPacketState extends IPhaseState {
      * @param entities The list of entities to spawn
      */
     default void postSpawnEntities(PhaseContext phaseContext, ArrayList<Entity> entities) {
-        final Player player =
-                phaseContext.getSource(Player.class)
+        final ServerPlayer player =
+                phaseContext.getSource(ServerPlayer.class)
                         .orElseThrow(TrackingUtil.throwWithContext("Expected to be capturing a player packet, but didn't get anything",
                                 phaseContext));
         final EntitySpawnCause cause = EntitySpawnCause.builder()
@@ -109,7 +105,7 @@ public interface IPacketState extends IPhaseState {
     default boolean spawnEntity(PhaseContext context, Entity entity, int chunkX, int chunkZ) {
         final net.minecraft.entity.Entity minecraftEntity = (net.minecraft.entity.Entity) entity;
         final WorldServer minecraftWorld = (WorldServer) minecraftEntity.world;
-        final Player player = context.getSource(Player.class)
+        final ServerPlayer player = context.getSource(ServerPlayer.class)
                         .orElseThrow(TrackingUtil.throwWithContext("Expected to be capturing a player", context));
         final ArrayList<Entity> entities = new ArrayList<>(1);
         entities.add(entity);
@@ -133,7 +129,7 @@ public interface IPacketState extends IPhaseState {
     }
 
     default void appendContextPreExplosion(PhaseContext phaseContext, PhaseData currentPhaseData) {
-        currentPhaseData.context.first(Player.class).ifPresent(player -> phaseContext.add(NamedCause.source(player)));
+        currentPhaseData.context.first(ServerPlayer.class).ifPresent(player -> phaseContext.add(NamedCause.source(player)));
     }
 
 }

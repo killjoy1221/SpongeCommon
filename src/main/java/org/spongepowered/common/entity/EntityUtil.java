@@ -75,7 +75,7 @@ import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.Humanoid;
 import org.spongepowered.api.entity.living.Living;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -726,7 +726,7 @@ public final class EntityUtil {
         return (EntityLivingBase) entity;
     }
 
-    public static EntityPlayerMP toNative(Player player) {
+    public static EntityPlayerMP toNative(ServerPlayer player) {
         if (!(player instanceof EntityPlayerMP)) {
             throw new IllegalArgumentException("Player entity is not compatible with this implementation: " + player);
         }

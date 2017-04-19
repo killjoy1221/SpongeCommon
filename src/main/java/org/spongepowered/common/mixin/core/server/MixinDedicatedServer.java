@@ -30,7 +30,7 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.api.Server;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -118,7 +118,7 @@ public abstract class MixinDedicatedServer extends MinecraftServer implements Se
 
         return protectionRadius > 0
                && Math.max(Math.abs(pos.getX() - spawnPoint.getX()), Math.abs(pos.getZ() - spawnPoint.getZ())) <= protectionRadius
-               && !((Player) playerIn).hasPermission("minecraft.spawn-protection.override");
+               && !((ServerPlayer) playerIn).hasPermission("minecraft.spawn-protection.override");
     }
 
 }

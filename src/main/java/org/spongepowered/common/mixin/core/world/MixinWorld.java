@@ -56,7 +56,6 @@ import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -75,7 +74,6 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -90,6 +88,7 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntitySnapshot;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.entity.projectile.EnderPearl;
 import org.spongepowered.api.entity.projectile.source.ProjectileSource;
 import org.spongepowered.api.event.cause.Cause;
@@ -611,12 +610,19 @@ public abstract class MixinWorld implements World, IMixinWorld {
         }
     }
 
+    private <T extends Player> Collection<T> getPlayers(Class<T> cl) {
+        return this.getPlayers().stream()
+                .filter(cl::isInstance)
+                .map(cl::cast)
+                .collect(Collectors.toList());
+    }
+
     @Override
     public void sendMessage(ChatType type, Text message) {
         checkNotNull(type, "type");
         checkNotNull(message, "message");
 
-        for (Player player : this.getPlayers()) {
+        for (ServerPlayer player : this.getPlayers(ServerPlayer.class)) {
             player.sendMessage(type, message);
         }
     }
@@ -625,19 +631,19 @@ public abstract class MixinWorld implements World, IMixinWorld {
     public void sendTitle(Title title) {
         checkNotNull(title, "title");
 
-        for (Player player : getPlayers()) {
+        for (ServerPlayer player : getPlayers(ServerPlayer.class)) {
             player.sendTitle(title);
         }
     }
 
     @Override
     public void resetTitle() {
-        getPlayers().forEach(Player::resetTitle);
+        getPlayers(ServerPlayer.class).forEach(ServerPlayer::resetTitle);
     }
 
     @Override
     public void clearTitle() {
-        getPlayers().forEach(Player::clearTitle);
+        getPlayers(ServerPlayer.class).forEach(ServerPlayer::clearTitle);
     }
 
     @SuppressWarnings("unchecked")

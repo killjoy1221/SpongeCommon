@@ -28,14 +28,12 @@ import com.flowpowered.math.vector.Vector3d;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.SPacketChangeGameState;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.network.play.server.SPacketDisconnect;
 import net.minecraft.network.play.server.SPacketEntityEffect;
@@ -75,7 +73,7 @@ import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Transform;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -94,7 +92,6 @@ import org.spongepowered.api.service.whitelist.WhitelistService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
-import org.spongepowered.api.world.Dimension;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
@@ -117,18 +114,15 @@ import org.spongepowered.common.event.tracking.phase.PlayerPhase;
 import org.spongepowered.common.interfaces.IMixinPlayerList;
 import org.spongepowered.common.interfaces.IMixinServerScoreboard;
 import org.spongepowered.common.interfaces.entity.IMixinEntity;
-import org.spongepowered.common.interfaces.entity.player.IMixinEntityPlayer;
 import org.spongepowered.common.interfaces.entity.player.IMixinEntityPlayerMP;
 import org.spongepowered.common.interfaces.network.play.server.IMixinSPacketWorldBorder;
 import org.spongepowered.common.interfaces.world.IMixinWorldServer;
-import org.spongepowered.common.mixin.core.entity.player.MixinEntityPlayer;
 import org.spongepowered.common.service.ban.SpongeIPBanList;
 import org.spongepowered.common.service.ban.SpongeUserListBans;
 import org.spongepowered.common.service.permission.SpongePermissionService;
 import org.spongepowered.common.service.whitelist.SpongeUserListWhitelist;
 import org.spongepowered.common.text.SpongeTexts;
 import org.spongepowered.common.text.chat.ChatUtil;
-import org.spongepowered.common.util.VecHelper;
 import org.spongepowered.common.world.WorldManager;
 import org.spongepowered.common.world.storage.SpongePlayerDataHandler;
 
@@ -275,7 +269,7 @@ public abstract class MixinPlayerList implements IMixinPlayerList {
             disconnectMessage = Text.of("You are not allowed to log in to this server.");
         }
 
-        Player player = (Player) playerIn;
+        ServerPlayer player = (ServerPlayer) playerIn;
         Transform<World> fromTransform = player.getTransform().setExtent((World) worldServer);
 
         ClientConnectionEvent.Login loginEvent = SpongeEventFactory.createClientConnectionEventLogin(
@@ -361,7 +355,7 @@ public abstract class MixinPlayerList implements IMixinPlayerList {
         // Sponge Start - Use the server's ResourcePack object
         Optional<ResourcePack> pack = ((Server)this.mcServer).getDefaultResourcePack();
         if (pack.isPresent()) {
-            ((Player)playerIn).sendResourcePack(pack.get());
+            ((ServerPlayer)playerIn).sendResourcePack(pack.get());
         }
         // Sponge End
 
@@ -478,7 +472,7 @@ public abstract class MixinPlayerList implements IMixinPlayerList {
             playerIn.dismountRidingEntity();
         }
 
-        final Player player = (Player) playerIn;
+        final ServerPlayer player = (ServerPlayer) playerIn;
         final Transform<World> fromTransform = player.getTransform();
         WorldServer worldServer = this.mcServer.worldServerForDimension(targetDimension);
         targetDimension = ((IMixinWorldServer) worldServer).getDimensionId();
@@ -549,7 +543,7 @@ public abstract class MixinPlayerList implements IMixinPlayerList {
 
         // ### PHASE 4 ### Fire event and set new location on the player
         final RespawnPlayerEvent event = SpongeEventFactory.createRespawnPlayerEvent(Cause.of(NamedCause.source(newPlayer)), fromTransform,
-                toTransform, (Player) playerIn, (Player) newPlayer, EntityUtil.tempIsBedSpawn, !conqueredEnd);
+                toTransform, (ServerPlayer) playerIn, (ServerPlayer) newPlayer, EntityUtil.tempIsBedSpawn, !conqueredEnd);
         EntityUtil.tempIsBedSpawn = false;
         SpongeImpl.postEvent(event);
         ((IMixinEntity) (Object) player).setLocationAndAngles(event.getToTransform());
@@ -805,7 +799,7 @@ public abstract class MixinPlayerList implements IMixinPlayerList {
         ((SpongeUser) ((IMixinEntityPlayerMP) player).getUserObject()).readFromNbt(nbt);
 
         // Remove player reference from scoreboard
-        ((IMixinServerScoreboard) ((Player) player).getScoreboard()).removePlayer(player, false);
+        ((IMixinServerScoreboard) ((ServerPlayer) player).getScoreboard()).removePlayer(player, false);
     }
 
     @Redirect(method = "playerLoggedOut(Lnet/minecraft/entity/player/EntityPlayerMP;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;removeEntity(Lnet/minecraft/entity/Entity;)V"))
@@ -833,11 +827,11 @@ public abstract class MixinPlayerList implements IMixinPlayerList {
         SPacketPlayerListItem noSpecificViewerPacket = new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, player);
 
         for (EntityPlayerMP viewer : this.playerEntityList) {
-            if (((Player) viewer).canSee((Player) player)) {
+            if (((ServerPlayer) viewer).canSee((ServerPlayer) player)) {
                 viewer.connection.sendPacket(noSpecificViewerPacket);
             }
 
-            if (((Player) player).canSee((Player) viewer)) {
+            if (((ServerPlayer) player).canSee((ServerPlayer) viewer)) {
                 player.connection.sendPacket(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, viewer));
             }
         }

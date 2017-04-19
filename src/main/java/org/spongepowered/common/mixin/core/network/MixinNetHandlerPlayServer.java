@@ -71,7 +71,7 @@ import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.entity.Transform;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.block.tileentity.ChangeSignEvent;
 import org.spongepowered.api.event.cause.Cause;
@@ -110,7 +110,6 @@ import org.spongepowered.common.interfaces.network.IMixinNetHandlerPlayServer;
 import org.spongepowered.common.interfaces.world.IMixinWorldServer;
 import org.spongepowered.common.text.SpongeTexts;
 import org.spongepowered.common.util.VecHelper;
-import org.spongepowered.common.world.WorldManager;
 
 import java.net.InetSocketAddress;
 import java.util.Deque;
@@ -171,8 +170,8 @@ public abstract class MixinNetHandlerPlayServer implements PlayerConnection, IMi
     }
 
     @Override
-    public Player getPlayer() {
-        return (Player) this.player;
+    public ServerPlayer getPlayer() {
+        return (ServerPlayer) this.player;
     }
 
     @Override
@@ -241,7 +240,7 @@ public abstract class MixinNetHandlerPlayServer implements PlayerConnection, IMi
     private Packet<?> rewritePacket(final Packet<?> packetIn) {
         // Update the tab list data
         if (packetIn instanceof SPacketPlayerListItem) {
-            ((SpongeTabList) ((Player) this.player).getTabList()).updateEntriesOnSend((SPacketPlayerListItem) packetIn);
+            ((SpongeTabList) ((ServerPlayer) this.player).getTabList()).updateEntriesOnSend((SPacketPlayerListItem) packetIn);
         }
         // Store the resource pack for use when processing resource pack statuses
         else if (packetIn instanceof SPacketResourcePackSend) {
@@ -418,7 +417,7 @@ public abstract class MixinNetHandlerPlayServer implements PlayerConnection, IMi
             }
 
             // Sponge Start - Movement event
-            Player player = (Player) this.player;
+            ServerPlayer player = (ServerPlayer) this.player;
             IMixinEntityPlayerMP mixinPlayer = (IMixinEntityPlayerMP) this.player;
             Vector3d fromrot = player.getRotation();
 
@@ -513,7 +512,7 @@ public abstract class MixinNetHandlerPlayServer implements PlayerConnection, IMi
         if (this.player.connection == null) {
             return;
         }
-        final Player player = ((Player) this.player);
+        final ServerPlayer player = ((ServerPlayer) this.player);
         final Text message = SpongeTexts.toText(component);
         final MessageChannel originalChannel = player.getMessageChannel();
         final ClientConnectionEvent.Disconnect event = SpongeEventFactory.createClientConnectionEventDisconnect(
@@ -643,7 +642,7 @@ public abstract class MixinNetHandlerPlayServer implements PlayerConnection, IMi
                         return;
                     }
 
-                    if (entity instanceof Player && !((World) this.player.world).getProperties().isPVPEnabled()) {
+                    if (entity instanceof ServerPlayer && !((World) this.player.world).getProperties().isPVPEnabled()) {
                         return; // PVP is disabled, ignore
                     }
 

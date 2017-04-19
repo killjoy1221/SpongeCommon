@@ -61,7 +61,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.common.SpongeImpl;
@@ -267,7 +267,7 @@ public final class PacketPhase extends TrackingPhase {
     public boolean populateCauseForNotifyNeighborEvent(IPhaseState state, PhaseContext context, Cause.Builder builder, CauseTracker causeTracker,
             IMixinChunk mixinChunk, BlockPos pos) {
         if (!super.populateCauseForNotifyNeighborEvent(state, context, builder, causeTracker, mixinChunk, pos)) {
-            final Player player = context.getSource(Player.class)
+            final ServerPlayer player = context.getSource(ServerPlayer.class)
                     .orElseThrow(TrackingUtil.throwWithContext("Processing a Player PAcket, expecting a player, but had none!", context));
             builder.named(NamedCause.notifier(player));
         }
@@ -277,7 +277,7 @@ public final class PacketPhase extends TrackingPhase {
     @Override
     public void associateNeighborStateNotifier(IPhaseState state, PhaseContext context, @Nullable BlockPos sourcePos, Block block, BlockPos notifyPos,
             WorldServer minecraftWorld, PlayerTracker.Type notifier) {
-        final Player player = context.getSource(Player.class)
+        final ServerPlayer player = context.getSource(ServerPlayer.class)
                         .orElseThrow(TrackingUtil.throwWithContext("Expected to be tracking a player, but not!", context));
         ((IMixinChunk) minecraftWorld.getChunkFromBlockCoords(notifyPos)).setBlockNotifier(notifyPos, player.getUniqueId());
 

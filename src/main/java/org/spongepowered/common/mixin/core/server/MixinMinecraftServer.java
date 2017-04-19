@@ -54,7 +54,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -120,7 +120,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
@@ -221,7 +220,7 @@ public abstract class MixinMinecraftServer implements Server, ConsoleSource, IMi
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Collection<Player> getOnlinePlayers() {
+    public Collection<ServerPlayer> getOnlinePlayers() {
         if (getPlayerList() == null || getPlayerList().getPlayers() == null) {
             return ImmutableList.of();
         }
@@ -229,19 +228,19 @@ public abstract class MixinMinecraftServer implements Server, ConsoleSource, IMi
     }
 
     @Override
-    public Optional<Player> getPlayer(UUID uniqueId) {
+    public Optional<ServerPlayer> getPlayer(UUID uniqueId) {
         if (getPlayerList() == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable((Player) getPlayerList().getPlayerByUUID(uniqueId));
+        return Optional.ofNullable((ServerPlayer) getPlayerList().getPlayerByUUID(uniqueId));
     }
 
     @Override
-    public Optional<Player> getPlayer(String name) {
+    public Optional<ServerPlayer> getPlayer(String name) {
         if (getPlayerList() == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable((Player) getPlayerList().getPlayerByUsername(name));
+        return Optional.ofNullable((ServerPlayer) getPlayerList().getPlayerByUsername(name));
     }
 
     @Override
@@ -306,7 +305,7 @@ public abstract class MixinMinecraftServer implements Server, ConsoleSource, IMi
 
     @Override
     public void shutdown(Text kickMessage) {
-        for (Player player : getOnlinePlayers()) {
+        for (ServerPlayer player : getOnlinePlayers()) {
             player.kick(kickMessage);
         }
 

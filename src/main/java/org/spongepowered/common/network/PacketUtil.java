@@ -46,7 +46,7 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.Humanoid;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -65,7 +65,6 @@ import org.spongepowered.common.event.tracking.phase.packet.IPacketState;
 import org.spongepowered.common.event.tracking.phase.TrackingPhases;
 import org.spongepowered.common.event.tracking.phase.packet.PacketPhase;
 import org.spongepowered.common.interfaces.entity.player.IMixinEntityPlayerMP;
-import org.spongepowered.common.interfaces.world.IMixinWorldServer;
 import org.spongepowered.common.item.inventory.util.ItemStackUtil;
 import org.spongepowered.common.util.VecHelper;
 
@@ -143,8 +142,8 @@ public class PacketUtil {
                             .add(NamedCause.of(InternalNamedCauses.Packet.IGNORING_CREATIVE, ignoreCreative));
 
                     TrackingPhases.PACKET.populateContext(packetIn, packetPlayer, packetState, context);
-                    context.owner((Player) packetPlayer);
-                    context.notifier((Player) packetPlayer);
+                    context.owner((ServerPlayer) packetPlayer);
+                    context.notifier((ServerPlayer) packetPlayer);
                     context.complete();
                 } else {
                     packetState = PacketPhase.General.INVALID;

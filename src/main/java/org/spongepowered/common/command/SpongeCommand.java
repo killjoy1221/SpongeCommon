@@ -57,7 +57,7 @@ import org.spongepowered.api.command.args.ChildCommandElementExecutor;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
@@ -383,11 +383,11 @@ public class SpongeCommand {
                 .description(Text.of("Display the tracked information of the Block you are looking at."))
                 .permission("sponge.command.blockinfo")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
+                    if (!(src instanceof ServerPlayer)) {
                         src.sendMessage(Text.of(TextColors.RED, "Players must execute this command!"));
                         return CommandResult.empty();
                     }
-                    final EntityPlayerMP entityPlayerMP = EntityUtil.toNative((Player) src);
+                    final EntityPlayerMP entityPlayerMP = EntityUtil.toNative((ServerPlayer) src);
                     final RayTraceResult rayTraceResult = EntityUtil.rayTraceFromEntity(entityPlayerMP, 5, 1.0F);
                     if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK) {
                         src.sendMessage(Text.of(TextColors.RED, TextStyles.ITALIC,
@@ -412,10 +412,10 @@ public class SpongeCommand {
                 .description(Text.of("Display the tracked information of the Entity you are looking at."))
                 .permission("sponge.command.entityinfo")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
+                    if (!(src instanceof ServerPlayer)) {
                         return CommandResult.empty();
                     }
-                    final EntityPlayerMP entityPlayerMP = EntityUtil.toNative((Player) src);
+                    final EntityPlayerMP entityPlayerMP = EntityUtil.toNative((ServerPlayer) src);
                     final RayTraceResult rayTraceResult = EntityUtil.rayTraceFromEntity(entityPlayerMP, 5, 1.0F, true);
                     if (rayTraceResult.typeOfHit != RayTraceResult.Type.ENTITY) {
                         src.sendMessage(Text.of(TextColors.RED, TextStyles.ITALIC,

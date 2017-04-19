@@ -32,7 +32,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.LocatableBlock;
@@ -81,7 +81,7 @@ class PlaceBlockPacketState extends BasicPacketState {
     @Override
     public void handleBlockChangeWithUser(@Nullable BlockChange blockChange, Transaction<BlockSnapshot> transaction,
         PhaseContext context) {
-        Player player = context.first(Player.class).get();
+        ServerPlayer player = context.first(ServerPlayer.class).get();
         final Location<World> location = transaction.getFinal().getLocation().get();
         BlockPos pos = ((IMixinLocation) (Object) location).getBlockPos();
         IMixinChunk spongeChunk = (IMixinChunk) ((WorldServer) location.getExtent()).getChunkFromBlockCoords(pos);
@@ -93,7 +93,7 @@ class PlaceBlockPacketState extends BasicPacketState {
 
     @Override
     public void associateBlockEventNotifier(PhaseContext context, IMixinWorldServer mixinWorldServer, BlockPos pos, IMixinBlockEventData blockEvent) {
-        final Player player = context.first(Player.class).get();
+        final ServerPlayer player = context.first(ServerPlayer.class).get();
         final Location<World> location = new Location<>(player.getWorld(), pos.getX(), pos.getY(), pos.getZ());
         final LocatableBlock locatableBlock = LocatableBlock.builder()
                 .location(location)

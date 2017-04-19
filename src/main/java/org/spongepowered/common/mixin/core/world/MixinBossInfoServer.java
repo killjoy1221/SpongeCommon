@@ -26,12 +26,11 @@ package org.spongepowered.common.mixin.core.world;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketUpdateBossInfo;
-import net.minecraft.world.BossInfo;
 import net.minecraft.world.BossInfoServer;
 import org.spongepowered.api.boss.BossBarColor;
 import org.spongepowered.api.boss.BossBarOverlay;
 import org.spongepowered.api.boss.ServerBossBar;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -109,16 +108,16 @@ public abstract class MixinBossInfoServer extends MixinBossInfo {
 
     @Intrinsic
     @SuppressWarnings("unchecked")
-    public Collection<Player> sbar$getPlayers() {
-        return (Collection<Player>) (Object) this.getPlayers();
+    public Collection<ServerPlayer> sbar$getPlayers() {
+        return (Collection<ServerPlayer>) (Object) this.getPlayers();
     }
 
-    public ServerBossBar sbar$addPlayer(Player player) {
+    public ServerBossBar sbar$addPlayer(ServerPlayer player) {
         this.addPlayer((EntityPlayerMP) player);
         return (ServerBossBar) this;
     }
 
-    public ServerBossBar sbar$removePlayer(Player player) {
+    public ServerBossBar sbar$removePlayer(ServerPlayer player) {
         this.removePlayer((EntityPlayerMP) player);
         return (ServerBossBar) this;
     }

@@ -28,7 +28,7 @@ import net.minecraft.server.management.UserListEntry;
 import net.minecraft.server.management.UserListEntryBan;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.ban.Ban;
 import org.spongepowered.asm.mixin.Final;
@@ -72,7 +72,7 @@ public abstract class MixinBanEntry<T> extends UserListEntry<T> implements Ban {
     }
 
     private void setSource() {
-        Optional<Player> user;
+        Optional<ServerPlayer> user;
 
         if (this.bannedBy.equals("Server")) { // There could be a user called Server, but of course Mojang doesn't care...
             this.commandSource = Optional.of(SpongeImpl.getGame().getServer().getConsole());

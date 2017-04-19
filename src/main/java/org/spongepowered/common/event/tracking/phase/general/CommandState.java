@@ -27,7 +27,7 @@ package org.spongepowered.common.event.tracking.phase.general;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -87,8 +87,8 @@ final class CommandState extends GeneralState {
                     final SpawnEntityEvent spawnEntityEvent = SpongeEventFactory.createSpawnEntityEvent(cause, entities);
                     SpongeImpl.postEvent(spawnEntityEvent);
                     if (!spawnEntityEvent.isCancelled()) {
-                        final boolean isPlayer = sender instanceof Player;
-                        final Player player = isPlayer ? (Player) sender : null;
+                        final boolean isPlayer = sender instanceof ServerPlayer;
+                        final ServerPlayer player = isPlayer ? (ServerPlayer) sender : null;
                         for (Entity entity : spawnEntityEvent.getEntities()) {
                             if (isPlayer) {
                                 EntityUtil.toMixin(entity).setCreator(player.getUniqueId());
@@ -139,8 +139,8 @@ final class CommandState extends GeneralState {
                                     SpongeEventFactory.createDropItemEventDestruct(cause, itemEntities);
                             SpongeImpl.postEvent(destruct);
                             if (!destruct.isCancelled()) {
-                                final boolean isPlayer = sender instanceof Player;
-                                final Player player = isPlayer ? (Player) sender : null;
+                                final boolean isPlayer = sender instanceof ServerPlayer;
+                                final ServerPlayer player = isPlayer ? (ServerPlayer) sender : null;
                                 for (Entity entity : destruct.getEntities()) {
                                     if (isPlayer) {
                                         EntityUtil.toMixin(entity).setCreator(player.getUniqueId());

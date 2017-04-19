@@ -26,7 +26,7 @@ package org.spongepowered.common.event.tracking.phase;
 
 import net.minecraft.entity.item.EntityItem;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -76,7 +76,7 @@ public class PlayerPhase extends TrackingPhase {
 	@Override
     public void unwind(IPhaseState state, PhaseContext phaseContext) {
         // Since currently all we have is PLAYER_LOGOUT, don't care about states.
-        final Player player = phaseContext.firstNamed(NamedCause.SOURCE, Player.class)
+        final ServerPlayer player = phaseContext.firstNamed(NamedCause.SOURCE, ServerPlayer.class)
                 .orElseThrow(TrackingUtil.throwWithContext("Expected to be processing a player leaving, but we're not!", phaseContext));
         phaseContext.getCapturedItemsSupplier().ifPresentAndNotEmpty(items -> {
             final Cause cause = Cause.source(

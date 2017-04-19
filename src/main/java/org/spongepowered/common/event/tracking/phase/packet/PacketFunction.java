@@ -48,7 +48,7 @@ import org.apache.logging.log4j.Level;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.entity.projectile.Projectile;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
@@ -83,7 +83,6 @@ import org.spongepowered.common.interfaces.IMixinPacketResourcePackSend;
 import org.spongepowered.common.interfaces.entity.player.IMixinEntityPlayerMP;
 import org.spongepowered.common.interfaces.network.IMixinNetHandlerPlayServer;
 import org.spongepowered.common.interfaces.world.IMixinWorldServer;
-import org.spongepowered.common.item.inventory.adapter.impl.slots.SlotAdapter;
 import org.spongepowered.common.item.inventory.util.ContainerUtil;
 import org.spongepowered.common.item.inventory.util.ItemStackUtil;
 import org.spongepowered.common.registry.type.ItemTypeRegistryModule;
@@ -225,7 +224,7 @@ public interface PacketFunction {
             context.getCapturedItemsSupplier().ifPresentAndNotEmpty(entities -> {
                 final List<Entity> items = entities.stream().map(EntityUtil::fromNative).collect(Collectors.toList());
                 final Cause cause = Cause.source(EntitySpawnCause.builder()
-                        .entity((Player) player)
+                        .entity((ServerPlayer) player)
                         .type(InternalSpawnTypes.PLACEMENT)
                         .build()
                 ).build();
@@ -254,7 +253,7 @@ public interface PacketFunction {
         } else if (state == PacketPhase.General.INTERACT_AT_ENTITY) {
             context.getCapturedEntitySupplier().ifPresentAndNotEmpty(entities -> {
                 final Cause cause = Cause.source(EntitySpawnCause.builder()
-                        .entity((Player) player)
+                        .entity((ServerPlayer) player)
                         .type(InternalSpawnTypes.PLACEMENT)
                         .build()
                 ).build();
@@ -267,7 +266,7 @@ public interface PacketFunction {
             context.getCapturedItemsSupplier().ifPresentAndNotEmpty(entities -> {
                 final List<Entity> items = entities.stream().map(EntityUtil::fromNative).collect(Collectors.toList());
                 final Cause cause = Cause.source(EntitySpawnCause.builder()
-                        .entity((Player) player)
+                        .entity((ServerPlayer) player)
                         .type(InternalSpawnTypes.PLACEMENT)
                         .build()
                 ).build();
@@ -925,7 +924,7 @@ public interface PacketFunction {
             default:
                 throw new AssertionError();
         }
-        SpongeImpl.postEvent(SpongeEventFactory.createResourcePackStatusEvent(Cause.source(player).build(), pack, (Player) player, status));
+        SpongeImpl.postEvent(SpongeEventFactory.createResourcePackStatusEvent(Cause.source(player).build(), pack, (ServerPlayer) player, status));
         if (status.wasSuccessful().isPresent()) {
             mixinHandler.getPendingResourcePackQueue().remove();
 
@@ -935,14 +934,14 @@ public interface PacketFunction {
                     // Fire events so other plugins know what happened to their resource packs.
                     pack = ((IMixinPacketResourcePackSend) mixinHandler.getPendingResourcePackQueue().remove()).getResourcePack();
                     if (status == ResourcePackStatusEvent.ResourcePackStatus.DECLINED) {
-                        SpongeImpl.postEvent(SpongeEventFactory.createResourcePackStatusEvent(supersededCause, pack, (Player) player,
+                        SpongeImpl.postEvent(SpongeEventFactory.createResourcePackStatusEvent(supersededCause, pack, (ServerPlayer) player,
                                 ResourcePackStatusEvent.ResourcePackStatus.DECLINED));
                     } else {
                         // Say it was successful even if it wasn't. Minecraft makes no guarantees, and I don't want to change the API.
                         // In addition, I would assume this would result in the expected behavior from plugins.
-                        SpongeImpl.postEvent(SpongeEventFactory.createResourcePackStatusEvent(supersededCause, pack, (Player) player,
+                        SpongeImpl.postEvent(SpongeEventFactory.createResourcePackStatusEvent(supersededCause, pack, (ServerPlayer) player,
                                 ResourcePackStatusEvent.ResourcePackStatus.ACCEPTED));
-                        SpongeImpl.postEvent(SpongeEventFactory.createResourcePackStatusEvent(supersededCause, pack, (Player) player,
+                        SpongeImpl.postEvent(SpongeEventFactory.createResourcePackStatusEvent(supersededCause, pack, (ServerPlayer) player,
                                 ResourcePackStatusEvent.ResourcePackStatus.SUCCESSFULLY_LOADED));
                     }
                 }
@@ -963,7 +962,7 @@ public interface PacketFunction {
         context.getCapturedBlockSupplier().ifPresentAndNotEmpty(blocks -> TrackingUtil.processBlockCaptures(blocks, state, context));
         context.getCapturedEntitySupplier().ifPresentAndNotEmpty(entities -> {
             final Cause cause = Cause.source(EntitySpawnCause.builder()
-                    .entity((Player) player)
+                    .entity((ServerPlayer) player)
                     .type(InternalSpawnTypes.PLACEMENT)
                     .build()
             ).build();
@@ -977,7 +976,7 @@ public interface PacketFunction {
         context.getCapturedItemsSupplier().ifPresentAndNotEmpty(entities -> {
             final List<Entity> items = entities.stream().map(EntityUtil::fromNative).collect(Collectors.toList());
             final Cause cause = Cause.source(EntitySpawnCause.builder()
-                    .entity((Player) player)
+                    .entity((ServerPlayer) player)
                     .type(InternalSpawnTypes.PLACEMENT)
                     .build()
             ).build();

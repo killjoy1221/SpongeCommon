@@ -35,10 +35,9 @@ import net.minecraft.network.play.server.SPacketPlayerListHeaderFooter;
 import net.minecraft.network.play.server.SPacketPlayerListItem;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.entity.living.player.tab.PlayerTabList;
-import org.spongepowered.api.entity.living.player.tab.TabList;
+import org.spongepowered.api.entity.living.player.tab.ServerTabList;
 import org.spongepowered.api.entity.living.player.tab.TabListEntry;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.common.interfaces.network.play.server.IMixinSPacketPlayerListItem;
@@ -52,7 +51,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public final class SpongeTabList implements PlayerTabList {
+public final class SpongeTabList implements ServerTabList {
 
     private static final ITextComponent EMPTY_COMPONENT = new TextComponentString("");
     private final EntityPlayerMP player;
@@ -65,8 +64,8 @@ public final class SpongeTabList implements PlayerTabList {
     }
 
     @Override
-    public Player getPlayer() {
-        return (Player) this.player;
+    public ServerPlayer getPlayer() {
+        return (ServerPlayer) this.player;
     }
 
     @Override
@@ -75,7 +74,7 @@ public final class SpongeTabList implements PlayerTabList {
     }
 
     @Override
-    public TabList setHeader(@Nullable Text header) {
+    public ServerTabList setHeader(@Nullable Text header) {
         this.header = header;
 
         this.refreshClientHeaderFooter();
@@ -89,7 +88,7 @@ public final class SpongeTabList implements PlayerTabList {
     }
 
     @Override
-    public TabList setFooter(@Nullable Text footer) {
+    public ServerTabList setFooter(@Nullable Text footer) {
         this.footer = footer;
 
         this.refreshClientHeaderFooter();
@@ -98,7 +97,7 @@ public final class SpongeTabList implements PlayerTabList {
     }
 
     @Override
-    public TabList setHeaderAndFooter(@Nullable Text header, @Nullable Text footer) {
+    public ServerTabList setHeaderAndFooter(@Nullable Text header, @Nullable Text footer) {
         // Do not call the methods, set directly
         this.header = header;
         this.footer = footer;
@@ -128,7 +127,7 @@ public final class SpongeTabList implements PlayerTabList {
     }
 
     @Override
-    public TabList addEntry(TabListEntry entry) throws IllegalArgumentException {
+    public ServerTabList addEntry(TabListEntry entry) throws IllegalArgumentException {
         checkNotNull(entry, "builder");
         checkState(entry.getList().equals(this), "the provided tab list entry was not created for this tab list");
 

@@ -27,7 +27,7 @@ package org.spongepowered.common.mixin.tracking.entity;
 import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.service.user.UserStorageService;
@@ -172,7 +172,7 @@ public abstract class MixinEntity_Tracker implements Entity, IMixinEntity {
 
     private Optional<User> getUserForUuid(UUID uuid) {
         // get player if online
-        Player player = Sponge.getServer().getPlayer(uuid).orElse(null);
+        ServerPlayer player = Sponge.getServer().getPlayer(uuid).orElse(null);
         if (player != null) {
             return Optional.of(player);
         }

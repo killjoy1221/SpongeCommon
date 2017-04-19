@@ -99,7 +99,7 @@ import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Transform;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.block.NotifyNeighborBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
@@ -989,7 +989,7 @@ public abstract class MixinWorldServer extends MixinWorld implements IMixinWorld
     public boolean isSpectatorOrIgnored(EntityPlayer entityPlayer) {
         // spectators are excluded from the sleep tally in vanilla
         // this redirect expands that check to include sleep-ignored players as well
-        boolean ignore = entityPlayer instanceof Player && ((Player)entityPlayer).isSleepingIgnored();
+        boolean ignore = entityPlayer instanceof ServerPlayer && ((ServerPlayer)entityPlayer).isSleepingIgnored();
         return ignore || entityPlayer.isSpectator();
     }
 
@@ -998,7 +998,7 @@ public abstract class MixinWorldServer extends MixinWorld implements IMixinWorld
     public boolean isPlayerFullyAsleep(EntityPlayer entityPlayer) {
         // if isPlayerFullyAsleep() returns false areAllPlayerAsleep() breaks its loop and returns false
         // this redirect forces it to return true if the player is sleep-ignored even if they're not sleeping
-        boolean ignore = entityPlayer instanceof Player && ((Player)entityPlayer).isSleepingIgnored();
+        boolean ignore = entityPlayer instanceof ServerPlayer && ((ServerPlayer)entityPlayer).isSleepingIgnored();
         return ignore || entityPlayer.isPlayerFullyAsleep();
     }
 
@@ -1007,7 +1007,7 @@ public abstract class MixinWorldServer extends MixinWorld implements IMixinWorld
     public boolean isSpectatorAndNotIgnored(EntityPlayer entityPlayer) {
         // if a player is marked as a spectator areAllPlayersAsleep() breaks its loop and returns false
         // this redirect forces it to return false if a player is sleep-ignored even if they're a spectator
-        boolean ignore = entityPlayer instanceof Player && ((Player)entityPlayer).isSleepingIgnored();
+        boolean ignore = entityPlayer instanceof ServerPlayer && ((ServerPlayer)entityPlayer).isSleepingIgnored();
         return !ignore && entityPlayer.isSpectator();
     }
 

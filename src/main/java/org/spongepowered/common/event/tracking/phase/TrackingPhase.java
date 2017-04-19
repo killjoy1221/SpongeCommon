@@ -32,7 +32,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
@@ -316,8 +316,8 @@ public abstract class TrackingPhase {
      * @return Whether a notifier was added
      */
     public boolean appendPreBlockProtectedCheck(Cause.Builder builder, IPhaseState phaseState, PhaseContext context, CauseTracker causeTracker) {
-        if (context.getSource(Player.class).isPresent()) {
-            builder.named(NamedCause.notifier(context.getSource(Player.class).get()));
+        if (context.getSource(ServerPlayer.class).isPresent()) {
+            builder.named(NamedCause.notifier(context.getSource(ServerPlayer.class).get()));
             return true;
         }
         return false;

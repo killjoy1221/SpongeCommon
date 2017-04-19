@@ -87,9 +87,10 @@ import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.entity.living.player.tab.PlayerTabList;
+import org.spongepowered.api.entity.living.player.tab.ServerTabList;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -175,7 +176,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Mixin(EntityPlayerMP.class)
-public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements Player, IMixinSubject, IMixinEntityPlayerMP, IMixinCommandSender,
+public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements ServerPlayer, IMixinSubject, IMixinEntityPlayerMP, IMixinCommandSender,
         IMixinCommandSource {
 
     @Shadow @Final public MinecraftServer mcServer;
@@ -217,7 +218,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     private Set<SkinPart> skinParts = Sets.newHashSet();
     private int viewDistance;
-    private PlayerTabList tabList = new SpongeTabList((EntityPlayerMP) (Object) this);
+    private ServerTabList tabList = new SpongeTabList((EntityPlayerMP) (Object) this);
 
     private GameType pendingGameType;
 
@@ -721,7 +722,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     }
 
     @Override
-    public PlayerTabList getTabList() {
+    public ServerTabList getTabList() {
         return this.tabList;
     }
 

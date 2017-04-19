@@ -27,7 +27,6 @@ package org.spongepowered.common.event.tracking;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -35,7 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
@@ -235,7 +234,7 @@ public class PhaseContext {
         return this;
     }
 
-    public PhaseContext player(@Nullable Player player) {
+    public PhaseContext player(@Nullable ServerPlayer player) {
         checkState(!this.isCompleted, "Cannot add a new object to the context if it's already marked as completed!");
         this.contextObjects.add(NamedCause.of(InternalNamedCauses.Tracker.CAPTURED_PLAYER, new CapturePlayer(player)));
         return this;
@@ -461,7 +460,7 @@ public class PhaseContext {
                         TrackingUtil.throwWithContext("Expected to be capturing a Player from an event listener, but we're not capturing them!", this));
     }
 
-    public Optional<Player> getCapturedPlayer() throws IllegalStateException {
+    public Optional<ServerPlayer> getCapturedPlayer() throws IllegalStateException {
         return this.firstNamed(InternalNamedCauses.Tracker.CAPTURED_PLAYER, CapturePlayer.class)
                 .orElseThrow(
                         TrackingUtil.throwWithContext("Expected to be capturing a Player from an event listener, but we're not capturing them!", this))
@@ -558,17 +557,17 @@ public class PhaseContext {
 
     public static final class CapturePlayer {
 
-        @Nullable private Player player;
+        @Nullable private ServerPlayer player;
 
         CapturePlayer() {
 
         }
 
-        CapturePlayer(@Nullable Player player) {
+        CapturePlayer(@Nullable ServerPlayer player) {
             this.player = player;
         }
 
-        public Optional<Player> getPlayer() {
+        public Optional<ServerPlayer> getPlayer() {
             return Optional.ofNullable(this.player);
         }
 
@@ -597,7 +596,7 @@ public class PhaseContext {
         }
 
         public void addPlayer(EntityPlayerMP playerMP) {
-            this.player = ((Player) playerMP);
+            this.player = ((ServerPlayer) playerMP);
         }
     }
 

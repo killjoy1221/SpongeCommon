@@ -40,7 +40,7 @@ import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.InvocationCommandException;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.ServerPlayer;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.translation.Translation;
@@ -213,7 +213,7 @@ public class MinecraftCommandWrapper implements CommandCallable {
         }
 
         Translation translation = SpongeImpl.getGame().getRegistry().getTranslationById(usage).get();
-        if (source instanceof Player) {
+        if (source instanceof ServerPlayer) {
             usage = translation.get(source.getLocale());
         } else {
             usage = translation.get(Locale.getDefault());
